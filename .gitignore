@@ -1,0 +1,14 @@
+build/
+dist/
+*.env
+.env
+*.db
+local_configs.json
+settings.json
+core/
+__pycache__/
+*.pyc
+instance/
+vpn_server.db
+.venv
+test.py

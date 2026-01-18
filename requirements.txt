@@ -1,0 +1,29 @@
+# --- Core Application Dependencies ---
+# Pinned to specific, audited versions to ensure build reproducibility and security.
+# Run `pip-audit -r requirements.txt` to check for known vulnerabilities.
+
+Flask==2.3.3
+werkzeug==2.3.7
+
+# --- Session Management ---
+# The core library for server-side sessions.
+Flask-Session==0.8.0
+Flask-Limiter>=2.0
+
+# --- WSGI Server ---
+# Gunicorn is for production on Linux/macOS.
+gunicorn==21.2.0
+
+# --- Database & Caching ---
+redis==5.0.1
+
+# --- Utility Libraries ---
+requests==2.31.0
+python-dotenv
+Flask-SQLAlchemy
+sqlalchemy
+psycopg2-binary
+mysql-connector-python
+# --- Windows Development Server (Optional, keep in a separate file like requirements-dev.txt) ---
+# Do not clutter your main requirements with environment-specific packages.
+ waitress==2.1.2
