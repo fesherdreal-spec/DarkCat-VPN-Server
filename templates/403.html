@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Ошибка 403 - Не положено{% endblock %}
+{% block content %}
+<article class="error-card">
+    <div class="error-code">403</div>
+    <h3>Не положено</h3>
+    <p>Мур! Сюда нельзя. Эта страничка только для своих.</p>
+    <p class="cat-face">&gt;:3</p>
+    <footer>
+        <a href="{{ url_for('frontend.index') }}" role="button" class="secondary">Вернуться, откуда пришёл</a>
+    </footer>
+</article>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Ошибка 404 - Потерялось{% endblock %}
+{% block content %}
+<article class="error-card">
+    <div class="error-code">404</div>
+    <h3>Потерялось</h3>
+    <p>Ой, а такой странички у нас нет. Может, она ушла гулять?</p>
+    <p class="cat-face">:/</p>
+    <footer>
+        <a href="{{ url_for('frontend.index') }}" role="button" class="cta-button">Искать с главной страницы</a>
+    </footer>
+</article>
+{% endblock %}

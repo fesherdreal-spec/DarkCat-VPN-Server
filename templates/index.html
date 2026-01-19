@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}DarkCat VPN - Твой уютный интернет{% endblock %}
+
+{% block content %}
+<article class="download-card">
+    <header>
+        <h2>Твой интернет.<br>Твои правила.</h2>
+        <p>Приватный доступ, тёплый и ламповый.</p>
+    </header>
+    
+    <div class="card-body">
+        <p style="margin-bottom: 1rem;">Никаких сложных настроек в браузере. Всё само работает, как котик мурчит.</p>
+        
+        <ul class="features-list">
+            <li><span>🔒</span> Шифрование, которое не прокусить</li>
+            <li><span>🚀</span> Скорость быстрее, чем тыгыдык в 3 ночи</li>
+            <li><span>🐾</span> Полная анонимность (мы не следим)</li>
+        </ul>
+    </div>
+
+    <footer>
+        <button data-target="instruction-modal" class="cta-button">
+           Скачать клиент
+        </button>
+        <p style="font-size: 0.8rem; margin-top: 1rem; color: var(--color-subtext); display: flex; justify-content: center;">
+            Версия: {{ version }} | Для Windows 10/11
+        </p>
+    </footer>
+</article>
+
+<dialog id="instruction-modal">
+  <article style="border: 1px solid var(--color-accent);">
+    <header>
+      <a href="#close" aria-label="Close" class="close" data-target="instruction-modal"></a>
+      <strong>🐱 Инструкция по приручению</strong>
+    </header>
+    <div class="modal-body">
+        <p>Всё очень просто, мрр:</p>
+        <ol>
+            <li>Хватай архив <code style="color: var(--color-accent);">{{ filename }}</code></li>
+            <li><strong>Обязательно</strong> распакуй его в отдельную папочку.</li>
+            <li>Запускай <code style="color: var(--color-success);">DarkCatVPN.exe</code> и жми большую кнопку.</li>
+        </ol>
+        <p style="font-size: 0.9em; color: var(--color-subtext);">
+            <em>Если Windows ругается и не пускает — скажи ему "Подробнее" -> "Выполнить в любом случае". Он просто вредный пёс. :3</em>
+        </p>
+    </div>
+    <footer>
+        <a href="#close" role="button" class="secondary" data-target="instruction-modal">
+            Я передумал
+        </a>
+        <a href="{{ download_url }}" role="button" class="cta-button" target="_blank">
+           Скачать (Мяу!) ⬇
+        </a>
+    </footer>
+  </article>
+</dialog>
+
+<script>
+  const isOpenClass = 'modal-is-open';
+  const openingClass = 'modal-is-opening';
+  const closingClass = 'modal-is-closing';
+  const animationDuration = 400; // ms
+  let visibleModal = null;
+
+  const toggleModal = event => {
+    event.preventDefault();
+    const modal = document.getElementById(event.currentTarget.getAttribute('data-target'));
+    (typeof(modal) != 'undefined' && modal != null) && isModalOpen(modal) ? closeModal(modal) : openModal(modal);
+  }
+
+  const isModalOpen = modal => {
+    return modal.hasAttribute('open') && modal.getAttribute('open') != 'false' ? true : false;
+  }
+
+  const openModal = modal => {
+    if (isModalOpen(modal)) return;
+    modal.setAttribute('open', true);
+    document.documentElement.classList.add(isOpenClass, openingClass);
+    setTimeout(() => {
+      visibleModal = modal;
+      document.documentElement.classList.remove(openingClass);
+    }, animationDuration);
+  }
+
+  const closeModal = modal => {
+    visibleModal = null;
+    document.documentElement.classList.add(closingClass);
+    setTimeout(() => {
+      modal.removeAttribute('open');
+      document.documentElement.classList.remove(closingClass, isOpenClass);
+    }, animationDuration);
+  }
+
+  document.addEventListener('click', event => {
+    if (visibleModal != null) {
+      const modalContent = visibleModal.querySelector('article');
+      const isClickInside = modalContent.contains(event.target);
+      if (!isClickInside && event.target.getAttribute('data-target') !== visibleModal.id) {
+        closeModal(visibleModal);
+      }
+    }
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && visibleModal != null) {
+      closeModal(visibleModal);
+    }
+  });
+
+  const btns = document.querySelectorAll('[data-target]');
+  btns.forEach(btn => btn.addEventListener('click', toggleModal));
+</script>
+{% endblock %}

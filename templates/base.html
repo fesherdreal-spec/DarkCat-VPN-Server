@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>{% block title %}DarkCat VPN{% endblock %}</title>
+    <meta name="description" content="DarkCat VPN - Твой интернет. Твои правила. Приватный доступ без компромиссов.">
+    
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.svg') }}" type="image/svg+xml">
+
+    <meta property="og:title" content="DarkCat VPN">
+    <meta property="og:description" content="Приватный, безопасный и быстрый VPN-клиент. Никаких логов. Только свобода.">
+    <meta property="og:type" content="website">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <ul>
+                <li>
+                    <a href="{{ url_for('frontend.index') }}" class="logo-link">
+                        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="DarkCat Logo" class="logo-icon">
+                        <span>DarkCat VPN</span>
+                    </a>
+                </li>
+            </ul>
+            <ul>
+                <li><a href="https://github.com/fesherdreal-spec/DarkCat-VPN" target="_blank" class="secondary">Github</a> | <a href="https://t.me/fesherd" target="_blank" class="secondary">Поддержка</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="container-fluid">
+        <small>© 2026 DarkCat VPN.<br>Трафик зашифрован, котики в безопасности :3</small>
+    </footer>
+</body>
+</html>

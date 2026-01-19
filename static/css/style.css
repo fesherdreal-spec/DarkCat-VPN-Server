@@ -1,0 +1,251 @@
+/* ──────────────────────────────────────────────── */
+/* DarkCat VPN — уютный тёмный стиль 2026           */
+/* ──────────────────────────────────────────────── */
+
+:root {
+  --color-bg:        #0f0f17;
+  --color-surface:   #161620;
+  --color-surface2:  #1e1e2e;
+  --color-text:      #e0e0ff;
+  --color-subtext:   #a0a0cc;
+  --color-accent:    #c792ea;     /* фиолетовый котиковый */
+  --color-accent-dim:#b480d9;
+  --color-success:   #a3e89e;
+  --color-danger:    #ff9999;
+  --color-warning:   #ffcc99;
+  --color-border:    #2a2a40;
+  --color-shadow:    rgba(0,0,0,0.6);
+  --radius:          14px;
+  --transition:      0.22s ease-out;
+}
+
+/* Reset pico some defaults */
+button, [role="button"], a[role="button"] {
+  transition: all var(--transition);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.55;
+}
+
+/* ── Header / Nav ───────────────────────────────── */
+body header {
+    padding-top: 24px;
+}
+header nav {
+  padding: 1.2rem 0;
+  padding-top: 0;
+  border-bottom: 1px solid var(--color-border);
+  backdrop-filter: blur(10px);
+  background: rgba(15,15,23, 0.82);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-weight: 600;
+  font-size: 1.4rem;
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.logo-icon {
+  height: 2.2rem;
+  filter: drop-shadow(0 0 8px rgba(199,146,234,0.4));
+  transition: transform var(--transition);
+}
+
+.logo-link:hover .logo-icon {
+  transform: rotate(12deg) scale(1.12);
+}
+
+/* ── Main container ─────────────────────────────── */
+main.container {
+  padding: 1.5rem 1rem 2.5rem;
+  max-width: 780px;
+}
+
+/* ── Card (download & error) ────────────────────── */
+.download-card,
+.error-card {
+    max-width: 540px;
+  margin: 0 auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 40px var(--color-shadow);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.download-card:hover,
+.error-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.65);
+}
+
+.download-card header {
+padding: 1.6rem 1.6rem 1rem;
+  background: linear-gradient(135deg, #1e1e2e 0%, #161620 100%);
+  text-align: center;
+}
+.download-card header p {
+  margin-top: 0.2rem;
+  font-size: 1.02rem;
+}
+.download-card h2 {
+font-size: 2rem;
+  margin: 0 0 0.5rem;margin-bottom: 0.45rem;
+  background: linear-gradient(90deg, #c792ea, #a3e89e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.08;
+}
+
+.card-body {
+padding: 0.3rem 1.7rem 1.2rem;}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+margin: 0.9rem 0 0.3rem;
+  font-size: 1.1rem;
+}
+
+.features-list li {
+  margin: 0.55rem 0;
+  font-size: 1.02rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.features-list li span {
+  font-size: 1.5rem;
+  min-width: 2rem;
+  text-align: center;
+}
+
+/* ── Buttons ────────────────────────────────────── */
+.cta-button {
+  background: var(--color-accent);
+  color: #0f0f17;
+  font-weight: 600;
+  padding: 0.75rem 2.1rem;
+  font-size: 1.03rem;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 6px 20px rgba(199,146,234,0.35);
+}
+
+.cta-button:hover {
+  background: #d1a5f0;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(199,146,234,0.5);
+}
+
+.outline,
+.secondary {
+  transition: all var(--transition);
+}
+
+/* ── Modal ──────────────────────────────────────── */
+dialog article {
+  background: var(--color-surface2);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-accent-dim);
+  box-shadow: 0 20px 70px rgba(0,0,0,0.8);
+}
+
+.modal-body {
+  padding: 1.4rem 2rem;
+}
+
+.modal-body code {
+  background: #25253a;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  font-family: 'Consolas', 'Courier New', monospace;
+}
+
+/* ── Error pages ────────────────────────────────── */
+.error-card {
+  text-align: center;
+  padding: 4rem 2rem 3rem;
+}
+
+.error-code {
+  font-size: 9rem;
+  font-weight: 800;
+  line-height: 0.9;
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
+
+.error-card h3 {
+  font-size: 2.1rem;
+  margin: 0.4rem 0 1.2rem;
+}
+
+.cat-face {
+  font-size: 5.5rem;
+  margin: 1.5rem 0 2rem;
+  line-height: 1;
+  font-family: system-ui;
+}
+
+/* 404, 403, 400, 500 — разные настроения котиков */
+[data-theme="dark"] .error-code:not(.error-code[style*="color"]) {
+  color: var(--color-accent);
+}
+
+/* ── Footer ─────────────────────────────────────── */
+footer.container-fluid {
+  padding: 2.5rem 1rem 1.5rem;
+  text-align: center;
+  color: var(--color-subtext);
+  font-size: 0.9rem;
+  border-top: 1px solid var(--color-border);
+  background: rgba(15,15,23,0.6);
+}
+footer p {
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+}
+/* ── Small improvements ─────────────────────────── */
+a {
+  color: var(--color-accent);
+  text-decoration-color: rgba(199,146,234,0.3);
+  transition: all var(--transition);
+}
+
+a:hover {
+  color: #d8b0f5;
+  text-decoration-color: var(--color-accent);
+}
+
+p {
+  color: var(--color-subtext);
+}
+
+/* Очень маленький скроллбар, если вдруг */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0d15;
+}
+::-webkit-scrollbar-thumb {
+  background: #3a3a55;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-dim);
+}

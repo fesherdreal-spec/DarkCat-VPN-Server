@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Ошибка 500 - Всё сломалось{% endblock %}
+{% block content %}
+<article class="error-card">
+    <div class="error-code" style="color: var(--color-danger); -webkit-text-fill-color: var(--color-danger);">500</div>
+    <h3>Всё сломалось</h3>
+    <p>Наш сервер уронил что-то тяжёлое и теперь грустит. Мы уже бежим его чинить!</p>
+    <p class="cat-face">x_x</p>
+    <footer>
+        <a href="{{ url_for('frontend.index') }}" role="button" class="outline">Вернуться на главную и подождать</a>
+    </footer>
+</article>
+{% endblock %}

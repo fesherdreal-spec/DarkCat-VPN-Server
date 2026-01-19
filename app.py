@@ -7,7 +7,7 @@ import logging
 from functools import wraps
 
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify, g, session
+from flask import Flask, request, jsonify, g, session, render_template
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
@@ -17,6 +17,9 @@ import redis
 from redis.exceptions import ConnectionError, TimeoutError, AuthenticationError
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+
+# Импортируем Blueprint для фронтенда
+from front import frontend_bp
 
 # --- Configuration ---
 logging.basicConfig(
@@ -121,7 +124,7 @@ db = SQLAlchemy(app)
 limiter = Limiter(
     get_remote_address,
     app=app,
-    default_limits=["200 per hour", "60 per minute"],
+    default_limits=["200 per hour", "50 per minute"],
     storage_uri=f"redis{'s' if REDIS_USE_TLS else ''}://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}",
     storage_options={"password": REDIS_PASSWORD} if REDIS_PASSWORD else {}
 )
@@ -157,7 +160,7 @@ def init_db_command():
     if User.query.filter_by(username=ROOT_ADMIN_USER).count() == 0:
         temp_password = secrets.token_hex(16)
         hashed_password = hash_password(temp_password)
-        admin_user = User(username=ROOT_ADMIN_USER, hashed_password=hashed_password, role='admin', config_link=DEFAULT_CONFIG)
+        admin_user = User(username=ROOT_ADMIN_USER, hashed_password=hashed_password, role='admin')
         db.session.add(admin_user)
         db.session.commit()
         print(f"!!! CRITICAL: Created initial root admin '{ROOT_ADMIN_USER}' with temporary password: {temp_password}", file=sys.stderr)
@@ -183,6 +186,35 @@ def verify_password(stored_password: str, provided_password: str) -> bool:
 
 def is_request_from_admin_ip(request) -> bool:
     return request.remote_addr in ALLOWED_ADMIN_IPS
+
+# --- Blueprint Registration ---
+app.register_blueprint(frontend_bp)
+
+# --- Global Error Handlers ---
+@app.errorhandler(400)
+def bad_request_error(error):
+    if request.path.startswith('/admin/') or request.path.startswith('/login'):
+        return jsonify({"status": "error", "message": "Bad Request"}), 400
+    return render_template('400.html'), 400
+
+@app.errorhandler(403)
+def forbidden_error(error):
+    if request.path.startswith('/admin/') or request.path.startswith('/login'):
+        return jsonify({"status": "error", "message": "Forbidden"}), 403
+    return render_template('403.html'), 403
+
+@app.errorhandler(404)
+def not_found_error(error):
+    if request.path.startswith('/admin/') or request.path.startswith('/login'):
+        return jsonify({"status": "error", "message": "Not Found"}), 404
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    if request.path.startswith('/admin/') or request.path.startswith('/login'):
+        return jsonify({"status": "error", "message": "Internal Server Error"}), 500
+    return render_template('500.html'), 500
 
 # --- Security Decorators ---
 def login_required(f):
@@ -212,7 +244,7 @@ def role_required(required_role):
         return decorated_function
     return decorator
 
-# --- Public Routes ---
+# --- API: Public Routes ---
 @app.route('/login', methods=['POST'])
 @limiter.limit("10 per minute")
 def login():
@@ -236,7 +268,7 @@ def login():
         user.config_link, user.config_name, user.expire_date = "", "Expired", 0
         db.session.commit()
         current_config, config_name, expired_alert = "", "Expired", True
-    return jsonify({"status": "success", "message": "Login successful", "username": user.username, "role": user.role, "config": current_config, "config_name": config_name, "expired_alert": expired_alert})
+    return jsonify({"status": "success", "message": "Login successful", "role": user.role, "config": current_config, "config_name": config_name, "expired_alert": expired_alert})
 
 @app.route('/logout', methods=['POST'])
 @login_required
@@ -269,7 +301,7 @@ def register():
         logging.error(f"Registration failed for '{username}': {e}")
         return jsonify({"status": "error", "message": "Internal server error"}), 500
 
-# === Authenticated Routes ===
+# --- API: Authenticated Routes ---
 @app.route('/heartbeat', methods=['POST'])
 @login_required
 def heartbeat():
@@ -277,12 +309,12 @@ def heartbeat():
     db.session.commit()
     return jsonify({"status": "ok"})
 
-# === ADMIN ROUTES ===
+# --- API: ADMIN ROUTES ---
 @app.route('/admin/users', methods=['GET'])
 @role_required('admin')
 def get_all_users():
     page = request.args.get('page', 1, type=int)
-    per_page = min(request.args.get('per_page', 20, type=int), 100) # Cap per_page
+    per_page = min(request.args.get('per_page', 20, type=int), 100)
     paginated_users = User.query.paginate(page=page, per_page=per_page, error_out=False)
     user_list = []
     current_time = time.time()
