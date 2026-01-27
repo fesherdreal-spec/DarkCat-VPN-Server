@@ -1,0 +1,44 @@
+name: Telegram Notify
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram message on new commit
+        shell: bash
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          COMMIT_SHA: ${{ github.sha }}
+          COMMIT_URL: "https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+          REPO_NAME: ${{ github.repository }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          escape_markdown() {
+            echo "$1" | sed 's/[_*[\]()~`>#+=|{}.!-]/\\&/g'
+          }
+
+
+          ESCAPED_REPO=$(escape_markdown "$REPO_NAME")
+          ESCAPED_ACTOR=$(escape_markdown "$ACTOR")
+          
+          SAFE_MSG=$(echo "$COMMIT_MSG" | sed 's/`/\\`/g')
+
+          TEXT="🐾 *Новый коммит* [${COMMIT_SHA:0:7}](${COMMIT_URL})
+          🙍‍♂️ *Автор:* \`${ESCAPED_ACTOR}\`
+          📂 *Репозиторий:* \`${ESCAPED_REPO}\`
+          
+          \`\`\`Description
+          ${SAFE_MSG}
+          \`\`\`"
+
+          curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT_ID}" \
+            --data-urlencode "parse_mode=MarkdownV2" \
+            --data-urlencode "text=${TEXT}" \
+            --fail-with-body
