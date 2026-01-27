@@ -268,7 +268,7 @@ def login():
         user.config_link, user.config_name, user.expire_date = "", "Expired", 0
         db.session.commit()
         current_config, config_name, expired_alert = "", "Expired", True
-    return jsonify({"status": "success", "message": "Login successful", "role": user.role, "config": current_config, "config_name": config_name, "expired_alert": expired_alert})
+    return jsonify({"status": "success", "message": "Login successful", "username": user.username, "role": user.role, "config": current_config, "config_name": config_name, "expired_alert": expired_alert})
 
 @app.route('/logout', methods=['POST'])
 @login_required
@@ -285,8 +285,8 @@ def register():
     if not data: return jsonify({"status": "error", "message": "Invalid JSON"}), 400
     username = data.get('username')
     password = data.get('password')
-    if not (username and password and len(password) >= 12):
-        return jsonify({"status": "error", "message": "Username and a password of at least 12 characters are required"}), 400
+    if not (username and password and len(password) >= 8):
+        return jsonify({"status": "error", "message": "Username and a password of at least 8 characters are required"}), 400
     try:
         new_user = User(username=username, hashed_password=hash_password(password), config_link=DEFAULT_CONFIG, config_name='Starter Pack')
         db.session.add(new_user)
@@ -372,7 +372,7 @@ def reset_password():
     target_username = data.get('target_user')
     new_password = data.get('new_password')
     if not (target_username and new_password): return jsonify({"status": "error", "message": "target_user and new_password are required"}), 400
-    if len(new_password) < 12: return jsonify({"status": "error", "message": "New password must be at least 12 characters long"}), 400
+    if len(new_password) < 8: return jsonify({"status": "error", "message": "New password must be at least 8 characters long"}), 400
     if target_username == ROOT_ADMIN_USER: return jsonify({"status": "error", "message": "Cannot reset password for the root admin account via API"}), 403
     target_user = User.query.filter_by(username=target_username).first()
     if not target_user: return jsonify({"status": "error", "message": "User not found"}), 404
